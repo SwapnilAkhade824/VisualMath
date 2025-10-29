@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calculator } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navigation = () => {
   const location = useLocation();
@@ -46,6 +47,7 @@ const Navigation = () => {
           </div>
           
           <div className="flex items-center space-x-2">
+            <ThemeToggle />
             <Link to="/visualize">
               <Button className="gradient-primary font-semibold hover:opacity-90 transition-opacity">
                 Start Learning
