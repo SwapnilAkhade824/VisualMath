@@ -25,34 +25,34 @@ const Visualize = () => {
       title: "Draw the Triangle",
       description:
         "Consider a right-angled triangle with sides a, b, and hypotenuse c.",
-      videoPath: "/sample/step1.mp4",
+      videoPath: "/videos/step1.mp4",
     },
     {
       title: "Construct Squares",
       description:
         "Construct squares on each of the three sides of the triangle.",
-      videoPath: "/sample/step2.mp4",
+      videoPath: "/videos/step2.mp4",
     },
     {
       title: "Highlight Areas of a² and b²",
       description: "The areas of these two squares are a² and b².",
-      videoPath: "/sample/step3.mp4",
+      videoPath: "/videos/step3.mp4",
     },
     {
       title: "Highlight Area of c²",
       description: "The area of the largest square is c².",
-      videoPath: "/sample/step4.mp4",
+      videoPath: "/videos/step4.mp4",
     },
     {
       title: "Rearrange / Compare",
       description:
         "The sum of the areas of the two smaller squares equals the area of the largest square.",
-      videoPath: "/sample/step5.mp4",
+      videoPath: "/videos/step5.mp4",
     },
     {
       title: "Final Equation",
       description: "Hence proved — in a right-angled triangle, a² + b² = c².",
-      videoPath: "/sample/step6.mp4",
+      videoPath: "/videos/step6.mp4",
     },
   ];
 
