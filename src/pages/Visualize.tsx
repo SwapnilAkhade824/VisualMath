@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -9,62 +9,103 @@ import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 interface Step {
   title: string;
   description: string;
-  visual: string;
+  videoPath?: string;
+  visual?: string;
 }
 
 const Visualize = () => {
   const location = useLocation();
   const topic = location.state?.topic || "Pythagorean Theorem";
-  
-  // Mock data for demonstration
-  const steps: Step[] = [
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const isPythagorean = topic === "Pythagorean Theorem";
+
+  // Pythagorean Theorem steps with videos
+  const pythagoreanSteps: Step[] = [
     {
-      title: "Introduction",
-      description: `Welcome to the visualization of ${topic}. This interactive lesson will guide you through each concept step by step.`,
-      visual: "📐",
+      title: "Draw the Triangle",
+      description:
+        "Consider a right-angled triangle with sides a, b, and hypotenuse c.",
+      videoPath: "/sample/step1.mp4",
     },
     {
-      title: "Basic Concept",
-      description: "Let's start with the fundamental idea. Draw a right triangle and label its sides as a, b, and c, where c is the hypotenuse.",
-      visual: "△",
+      title: "Construct Squares",
+      description:
+        "Construct squares on each of the three sides of the triangle.",
+      videoPath: "/sample/step2.mp4",
     },
     {
-      title: "Visual Proof",
-      description: "The area of the square on side c equals the sum of the areas of squares on sides a and b: a² + b² = c²",
-      visual: "▢",
+      title: "Highlight Areas of a² and b²",
+      description: "The areas of these two squares are a² and b².",
+      videoPath: "/sample/step3.mp4",
     },
     {
-      title: "Example Application",
-      description: "Let's apply this to a real problem. If a = 3 and b = 4, then c² = 9 + 16 = 25, so c = 5.",
-      visual: "✓",
+      title: "Highlight Area of c²",
+      description: "The area of the largest square is c².",
+      videoPath: "/sample/step4.mp4",
     },
     {
-      title: "Summary",
-      description: "You've now learned the complete concept! Practice with different values to strengthen your understanding.",
-      visual: "🎓",
+      title: "Rearrange / Compare",
+      description:
+        "The sum of the areas of the two smaller squares equals the area of the largest square.",
+      videoPath: "/sample/step5.mp4",
+    },
+    {
+      title: "Final Equation",
+      description: "Hence proved — in a right-angled triangle, a² + b² = c².",
+      videoPath: "/sample/step6.mp4",
     },
   ];
 
+  // Generic steps for other topics (3 steps trial)
+  const genericSteps: Step[] = [
+    {
+      title: "Step 1",
+      description: `Introduction to ${topic}. Understanding the basic concept and fundamental principles.`,
+      visual: "📊",
+    },
+    {
+      title: "Step 2",
+      description: `Exploring the key components of ${topic}. Visual breakdown of the main elements.`,
+      visual: "📈",
+    },
+    {
+      title: "Step 3",
+      description: `Summary and application of ${topic}. Putting it all together for practical understanding.`,
+      visual: "✓",
+    },
+  ];
+
+  const steps = isPythagorean ? pythagoreanSteps : genericSteps;
   const [currentStep, setCurrentStep] = useState(0);
-  
+
+  // Play video once when step changes (only for Pythagorean)
+  useEffect(() => {
+    if (isPythagorean && videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play().catch((error) => {
+        console.log("Video autoplay prevented:", error);
+      });
+    }
+  }, [currentStep, isPythagorean]);
+
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
-  
+
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
-  
+
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <Link to="/">
@@ -90,17 +131,40 @@ const Visualize = () => {
         {/* Main Visualization Area */}
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Visual Display */}
-            <Card className="p-8 card-shadow flex items-center justify-center min-h-[400px] bg-gradient-to-br from-primary/5 to-accent/5">
-              <div className="text-center animate-scale-in">
-                <div className="text-9xl mb-4">{steps[currentStep].visual}</div>
-                <p className="text-sm text-muted-foreground">Visual representation</p>
+            {/* Visual Display - Video or Icon */}
+            <Card className="p-4 card-shadow flex items-center justify-center min-h-[400px] bg-gradient-to-br from-primary/5 to-accent/5 border-2 shadow-lg overflow-hidden">
+              <div className="w-full h-full flex items-center justify-center">
+                {isPythagorean ? (
+                  <video
+                    ref={videoRef}
+                    key={currentStep}
+                    className="w-full h-full object-contain rounded-lg"
+                    controls={false}
+                    playsInline
+                    muted
+                  >
+                    <source
+                      src={steps[currentStep].videoPath}
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <div className="text-center animate-scale-in">
+                    <div className="text-9xl mb-4">
+                      {steps[currentStep].visual}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Visual representation
+                    </p>
+                  </div>
+                )}
               </div>
             </Card>
 
             {/* Explanation */}
             <div className="space-y-6">
-              <Card className="p-8 card-shadow h-full flex flex-col">
+              <Card className="p-8 card-shadow h-full flex flex-col border-2 shadow-lg">
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold mb-4 text-primary">
                     {steps[currentStep].title}
@@ -110,18 +174,17 @@ const Visualize = () => {
                   </p>
                 </div>
 
-                {/* Step Indicators */}
+                {/* Step Indicators - Removed click functionality */}
                 <div className="flex justify-center gap-2 mt-8">
                   {steps.map((_, index) => (
-                    <button
+                    <div
                       key={index}
-                      onClick={() => setCurrentStep(index)}
                       className={`h-2 rounded-full transition-all duration-300 ${
-                        index === currentStep 
-                          ? "w-8 bg-primary" 
-                          : "w-2 bg-border hover:bg-primary/50"
+                        index === currentStep
+                          ? "w-8 bg-primary"
+                          : "w-2 bg-border"
                       }`}
-                      aria-label={`Go to step ${index + 1}`}
+                      aria-label={`Step ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -141,11 +204,11 @@ const Visualize = () => {
               <ChevronLeft className="h-5 w-5" />
               Previous
             </Button>
-            
+
             <div className="text-sm text-muted-foreground">
               {currentStep + 1} / {steps.length}
             </div>
-            
+
             <Button
               onClick={nextStep}
               disabled={currentStep === steps.length - 1}
